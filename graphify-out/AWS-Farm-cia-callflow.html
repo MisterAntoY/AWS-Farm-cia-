@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS-Farm-cia- — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>AWS-Farm-cia- — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 44 nodes, 42 edges, 8 communities. Commit: 0e7be4d</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#123md-anexos-assinatura">123Md Anexos Assinatura</a>
+    <a href="#123md-descri-o-benef-cios">123Md Descrição Benefícios</a>
+    <a href="#readmemd-anexos-assinatura">Readmemd Anexos Assinatura</a>
+    <a href="#readmemd-descri-o-benef-cios">Readmemd Descrição Benefícios</a>
+    <a href="#123md-benef-cios-obtidos">123Md Benefícios Obtidos</a>
+    <a href="#123md-benef-cios-obtidos-7f128d">123Md Benefícios Obtidos</a>
+    <a href="#readmemd-benef-cios-obtidos">Readmemd Benefícios Obtidos</a>
+    <a href="#readmemd-benef-cios-obtidos-d2c04b">Readmemd Benefícios Obtidos</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    SECTION_123MD_ANEXOS_ASSINATURA_291306F9("123Md Anexos Assinatura<br/><small>6 nodes</small>")
+    class SECTION_123MD_ANEXOS_ASSINATURA_291306F9 module;
+    SECTION_123MD_DESCRI_O_BENEF_CIOS_795BD5E4("123Md Descrição Benefícios<br/><small>6 nodes</small>")
+    class SECTION_123MD_DESCRI_O_BENEF_CIOS_795BD5E4 module;
+    READMEMD_ANEXOS_ASSINATURA_918BA66D("Readmemd Anexos Assinatura<br/><small>6 nodes</small>")
+    class READMEMD_ANEXOS_ASSINATURA_918BA66D module;
+    READMEMD_DESCRI_O_BENEF_CIOS_5B63A52B("Readmemd Descrição Benefícios<br/><small>6 nodes</small>")
+    class READMEMD_DESCRI_O_BENEF_CIOS_5B63A52B module;
+    SECTION_123MD_BENEF_CIOS_OBTIDOS_A47CA20C("123Md Benefícios Obtidos<br/><small>5 nodes</small>")
+    class SECTION_123MD_BENEF_CIOS_OBTIDOS_A47CA20C module;
+    SECTION_123MD_BENEF_CIOS_OBTIDOS_7F128D_265FD4D0("123Md Benefícios Obtidos<br/><small>5 nodes</small>")
+    class SECTION_123MD_BENEF_CIOS_OBTIDOS_7F128D_265FD4D0 module;
+    READMEMD_BENEF_CIOS_OBTIDOS_CB3B264D("Readmemd Benefícios Obtidos<br/><small>5 nodes</small>")
+    class READMEMD_BENEF_CIOS_OBTIDOS_CB3B264D module;
+    READMEMD_BENEF_CIOS_OBTIDOS_D2C04B_3248D6CF("Readmemd Benefícios Obtidos<br/><small>5 nodes</small>")
+    class READMEMD_BENEF_CIOS_OBTIDOS_D2C04B_3248D6CF module;
+    SECTION_123MD_ANEXOS_ASSINATURA_291306F9 -->|contains| SECTION_123MD_DESCRI_O_BENEF_CIOS_795BD5E4
+    SECTION_123MD_DESCRI_O_BENEF_CIOS_795BD5E4 -->|contains| SECTION_123MD_BENEF_CIOS_OBTIDOS_A47CA20C
+    SECTION_123MD_DESCRI_O_BENEF_CIOS_795BD5E4 -->|contains| SECTION_123MD_BENEF_CIOS_OBTIDOS_7F128D_265FD4D0
+    READMEMD_ANEXOS_ASSINATURA_918BA66D -->|contains| READMEMD_DESCRI_O_BENEF_CIOS_5B63A52B
+    READMEMD_DESCRI_O_BENEF_CIOS_5B63A52B -->|contains| READMEMD_BENEF_CIOS_OBTIDOS_CB3B264D
+    READMEMD_DESCRI_O_BENEF_CIOS_5B63A52B -->|contains| READMEMD_BENEF_CIOS_OBTIDOS_D2C04B_3248D6CF
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>123Md Anexos Assinatura</td><td>6</td><td><code>0</code></td></tr><tr><td>123Md Descrição Benefícios</td><td>6</td><td><code>1</code></td></tr><tr><td>Readmemd Anexos Assinatura</td><td>6</td><td><code>2</code></td></tr><tr><td>Readmemd Descrição Benefícios</td><td>6</td><td><code>3</code></td></tr><tr><td>123Md Benefícios Obtidos</td><td>5</td><td><code>4</code></td></tr><tr><td>123Md Benefícios Obtidos</td><td>5</td><td><code>5</code></td></tr><tr><td>Readmemd Benefícios Obtidos</td><td>5</td><td><code>6</code></td></tr><tr><td>Readmemd Benefícios Obtidos</td><td>5</td><td><code>7</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">123Md Anexos Assinatura -&gt; 123Md Descrição Benefícios -&gt; 123Md Benefícios Obtidos -&gt; Readmemd Anexos Assinatura -&gt; Readmemd Descrição Benefícios -&gt; Readmemd Benefícios Obtidos -&gt; 123Md Benefícios Obtidos</div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h4>Graph Report Highlights</h4>
+    <ul>
+      <li>44 nodes · 42 edges · 8 communities</li>
+      <li>Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS</li>
+      <li>Token cost: 0 input · 0 output</li>
+      <li>1. `Etapa 1` - 5 edges</li>
+      <li>2. `Etapa 2` - 5 edges</li>
+      <li>3. `Etapa 3` - 5 edges</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. 123Md Anexos Assinatura ====== -->
+<h2 id="123md-anexos-assinatura">2. 123Md Anexos Assinatura</h2>
+<p>123Md Anexos Assinatura groups implementation around 123md, anexos, assinatura, responsável, mostly in 123.md. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: 123Md Anexos Assinatura (6 nodes, 5 edges)
+    node_123_40bd0015("123.md")
+    node_123_relat_rio_de_implementa_o_de_servi_os_a_ca7a5a7f("RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS<br/><small>123.md</small>")
+    node_123_conclus_o_a4e70791("Conclusão<br/><small>123.md</small>")
+    node_123_anexos_5b519659("Anexos<br/><small>123.md</small>")
+    node_123_assinatura_do_respons_vel_pelo_projeto_3d412fbd("Assinatura do Responsável pelo Projeto<br/><small>123.md</small>")
+    node_123_introdu_o_7f674b07("Introdução<br/><small>123.md</small>")
+    node_123_40bd0015 -->|contains| node_123_relat_rio_de_implementa_o_de_servi_os_a_ca7a5a7f
+    node_123_40bd0015 -->|contains| node_123_conclus_o_a4e70791
+    node_123_40bd0015 -->|contains| node_123_anexos_5b519659
+    node_123_40bd0015 -->|contains| node_123_assinatura_do_respons_vel_pelo_projeto_3d412fbd
+    node_123_40bd0015 -->|contains| node_123_introdu_o_7f674b07
+    class node_123_40bd0015 concept;
+    class node_123_relat_rio_de_implementa_o_de_servi_os_a_ca7a5a7f concept;
+    class node_123_conclus_o_a4e70791 concept;
+    class node_123_anexos_5b519659 concept;
+    class node_123_assinatura_do_respons_vel_pelo_projeto_3d412fbd concept;
+    class node_123_introdu_o_7f674b07 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>123.md</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 123.md.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Anexos</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Anexos.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Assinatura do Responsável pelo Projeto</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Assinatura do Responsável pelo Projeto.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Conclusão</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Conclusão.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Introdução</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Introdução.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>123.md</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. 123Md Descrição Benefícios ====== -->
+<h2 id="123md-descri-o-benef-cios">3. 123Md Descrição Benefícios</h2>
+<p>123Md Descrição Benefícios groups implementation around 123md, descrição, benefícios, obtidos, mostly in 123.md. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: 123Md Descrição Benefícios (6 nodes, 5 edges)
+    node_123_etapa_2_2d71d228("Etapa 2<br/><small>123.md</small>")
+    node_123_descri_o_do_projeto_44b94a49("Descrição do Projeto<br/><small>123.md</small>")
+    node_123_servi_o_aws_49_a00542b1("Serviço AWS:<br/><small>123.md</small>")
+    node_123_foco_da_ferramenta_53_095b2884("Foco da ferramenta:<br/><small>123.md</small>")
+    node_123_descri_o_do_caso_de_uso_57_6c8280e3("Descrição do caso de uso:<br/><small>123.md</small>")
+    node_123_benef_cios_obtidos_65_18670e20("Benefícios obtidos:<br/><small>123.md</small>")
+    node_123_descri_o_do_projeto_44b94a49 -->|contains| node_123_etapa_2_2d71d228
+    node_123_etapa_2_2d71d228 -->|contains| node_123_servi_o_aws_49_a00542b1
+    node_123_etapa_2_2d71d228 -->|contains| node_123_foco_da_ferramenta_53_095b2884
+    node_123_etapa_2_2d71d228 -->|contains| node_123_descri_o_do_caso_de_uso_57_6c8280e3
+    node_123_etapa_2_2d71d228 -->|contains| node_123_benef_cios_obtidos_65_18670e20
+    class node_123_etapa_2_2d71d228 concept;
+    class node_123_descri_o_do_projeto_44b94a49 concept;
+    class node_123_servi_o_aws_49_a00542b1 concept;
+    class node_123_foco_da_ferramenta_53_095b2884 concept;
+    class node_123_descri_o_do_caso_de_uso_57_6c8280e3 concept;
+    class node_123_benef_cios_obtidos_65_18670e20 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Benefícios obtidos:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Benefícios obtidos:.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Descrição do caso de uso:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do caso de uso:.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Descrição do Projeto</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do Projeto.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Etapa 2</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Etapa 2.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Foco da ferramenta:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Foco da ferramenta:.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Serviço AWS:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Serviço AWS:.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>123.md</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. Readmemd Anexos Assinatura ====== -->
+<h2 id="readmemd-anexos-assinatura">4. Readmemd Anexos Assinatura</h2>
+<p>Readmemd Anexos Assinatura groups implementation around readmemd, anexos, assinatura, responsável, mostly in README.md. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Readmemd Anexos Assinatura (6 nodes, 5 edges)
+    readme_f78a71af("README.md")
+    readme_relat_rio_de_implementa_o_de_servi_os_aws_fce607a1("RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS<br/><small>README.md</small>")
+    readme_conclus_o_19848d4d("Conclusão<br/><small>README.md</small>")
+    readme_anexos_339e411d("Anexos<br/><small>README.md</small>")
+    readme_assinatura_do_respons_vel_pelo_projeto_45910aa8("Assinatura do Responsável pelo Projeto<br/><small>README.md</small>")
+    readme_introdu_o_4b741b33("Introdução<br/><small>README.md</small>")
+    readme_f78a71af -->|contains| readme_relat_rio_de_implementa_o_de_servi_os_aws_fce607a1
+    readme_f78a71af -->|contains| readme_conclus_o_19848d4d
+    readme_f78a71af -->|contains| readme_anexos_339e411d
+    readme_f78a71af -->|contains| readme_assinatura_do_respons_vel_pelo_projeto_45910aa8
+    readme_f78a71af -->|contains| readme_introdu_o_4b741b33
+    class readme_f78a71af concept;
+    class readme_relat_rio_de_implementa_o_de_servi_os_aws_fce607a1 concept;
+    class readme_conclus_o_19848d4d concept;
+    class readme_anexos_339e411d concept;
+    class readme_assinatura_do_respons_vel_pelo_projeto_45910aa8 concept;
+    class readme_introdu_o_4b741b33 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>README.md</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing README.md.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Anexos</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Anexos.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Assinatura do Responsável pelo Projeto</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Assinatura do Responsável pelo Projeto.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Conclusão</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Conclusão.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Introdução</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Introdução.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>README.md</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Readmemd Descrição Benefícios ====== -->
+<h2 id="readmemd-descri-o-benef-cios">5. Readmemd Descrição Benefícios</h2>
+<p>Readmemd Descrição Benefícios groups implementation around readmemd, descrição, benefícios, obtidos, mostly in README.md. This section covers 6 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Readmemd Descrição Benefícios (6 nodes, 5 edges)
+    readme_etapa_1_caf71c25("Etapa 1<br/><small>README.md</small>")
+    readme_descri_o_do_projeto_9e554180("Descrição do Projeto<br/><small>README.md</small>")
+    readme_servi_o_aws_d4e38eca("Serviço AWS:<br/><small>README.md</small>")
+    readme_foco_da_ferramenta_97f31d10("Foco da ferramenta:<br/><small>README.md</small>")
+    readme_descri_o_do_caso_de_uso_a412e2c6("Descrição do caso de uso:<br/><small>README.md</small>")
+    readme_benef_cios_obtidos_8995bfec("Benefícios obtidos:<br/><small>README.md</small>")
+    readme_descri_o_do_projeto_9e554180 -->|contains| readme_etapa_1_caf71c25
+    readme_etapa_1_caf71c25 -->|contains| readme_servi_o_aws_d4e38eca
+    readme_etapa_1_caf71c25 -->|contains| readme_foco_da_ferramenta_97f31d10
+    readme_etapa_1_caf71c25 -->|contains| readme_descri_o_do_caso_de_uso_a412e2c6
+    readme_etapa_1_caf71c25 -->|contains| readme_benef_cios_obtidos_8995bfec
+    class readme_etapa_1_caf71c25 concept;
+    class readme_descri_o_do_projeto_9e554180 concept;
+    class readme_servi_o_aws_d4e38eca concept;
+    class readme_foco_da_ferramenta_97f31d10 concept;
+    class readme_descri_o_do_caso_de_uso_a412e2c6 concept;
+    class readme_benef_cios_obtidos_8995bfec concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Benefícios obtidos:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Benefícios obtidos:.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Descrição do caso de uso:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do caso de uso:.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Descrição do Projeto</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do Projeto.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Etapa 1</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Etapa 1.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Foco da ferramenta:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Foco da ferramenta:.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Serviço AWS:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Serviço AWS:.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>README.md</code></td><td>6 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. 123Md Benefícios Obtidos ====== -->
+<h2 id="123md-benef-cios-obtidos">6. 123Md Benefícios Obtidos</h2>
+<p>123Md Benefícios Obtidos groups implementation around 123md, benefícios, obtidos, descrição, mostly in 123.md. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: 123Md Benefícios Obtidos (5 nodes, 4 edges)
+    node_123_etapa_1_c09f592c("Etapa 1<br/><small>123.md</small>")
+    node_123_servi_o_aws_6f7d470a("Serviço AWS:<br/><small>123.md</small>")
+    node_123_foco_da_ferramenta_e2f3f28f("Foco da ferramenta:<br/><small>123.md</small>")
+    node_123_descri_o_do_caso_de_uso_4662e0a6("Descrição do caso de uso:<br/><small>123.md</small>")
+    node_123_benef_cios_obtidos_af366cba("Benefícios obtidos:<br/><small>123.md</small>")
+    node_123_etapa_1_c09f592c -->|contains| node_123_servi_o_aws_6f7d470a
+    node_123_etapa_1_c09f592c -->|contains| node_123_foco_da_ferramenta_e2f3f28f
+    node_123_etapa_1_c09f592c -->|contains| node_123_descri_o_do_caso_de_uso_4662e0a6
+    node_123_etapa_1_c09f592c -->|contains| node_123_benef_cios_obtidos_af366cba
+    class node_123_etapa_1_c09f592c concept;
+    class node_123_servi_o_aws_6f7d470a concept;
+    class node_123_foco_da_ferramenta_e2f3f28f concept;
+    class node_123_descri_o_do_caso_de_uso_4662e0a6 concept;
+    class node_123_benef_cios_obtidos_af366cba concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Benefícios obtidos:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Benefícios obtidos:.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Descrição do caso de uso:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do caso de uso:.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Etapa 1</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Etapa 1.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Foco da ferramenta:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Foco da ferramenta:.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Serviço AWS:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Serviço AWS:.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>123.md</code></td><td>5 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. 123Md Benefícios Obtidos ====== -->
+<h2 id="123md-benef-cios-obtidos-7f128d">7. 123Md Benefícios Obtidos</h2>
+<p>123Md Benefícios Obtidos groups implementation around 123md, benefícios, obtidos, descrição, mostly in 123.md. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: 123Md Benefícios Obtidos (5 nodes, 4 edges)
+    node_123_etapa_3_8a70449c("Etapa 3<br/><small>123.md</small>")
+    node_123_servi_o_aws_77_fabdc66e("Serviço AWS:<br/><small>123.md</small>")
+    node_123_foco_da_ferramenta_81_a93839e8("Foco da ferramenta:<br/><small>123.md</small>")
+    node_123_descri_o_do_caso_de_uso_85_6b24cd77("Descrição do caso de uso:<br/><small>123.md</small>")
+    node_123_benef_cios_obtidos_93_9943b318("Benefícios obtidos:<br/><small>123.md</small>")
+    node_123_etapa_3_8a70449c -->|contains| node_123_servi_o_aws_77_fabdc66e
+    node_123_etapa_3_8a70449c -->|contains| node_123_foco_da_ferramenta_81_a93839e8
+    node_123_etapa_3_8a70449c -->|contains| node_123_descri_o_do_caso_de_uso_85_6b24cd77
+    node_123_etapa_3_8a70449c -->|contains| node_123_benef_cios_obtidos_93_9943b318
+    class node_123_etapa_3_8a70449c concept;
+    class node_123_servi_o_aws_77_fabdc66e concept;
+    class node_123_foco_da_ferramenta_81_a93839e8 concept;
+    class node_123_descri_o_do_caso_de_uso_85_6b24cd77 concept;
+    class node_123_benef_cios_obtidos_93_9943b318 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Benefícios obtidos:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Benefícios obtidos:.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Descrição do caso de uso:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do caso de uso:.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Etapa 3</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Etapa 3.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Foco da ferramenta:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Foco da ferramenta:.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Serviço AWS:</code><br><small style="color:var(--muted)">123.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Serviço AWS:.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>123.md</code></td><td>5 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Readmemd Benefícios Obtidos ====== -->
+<h2 id="readmemd-benef-cios-obtidos">8. Readmemd Benefícios Obtidos</h2>
+<p>Readmemd Benefícios Obtidos groups implementation around readmemd, benefícios, obtidos, descrição, mostly in README.md. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Readmemd Benefícios Obtidos (5 nodes, 4 edges)
+    readme_etapa_2_633eb77c("Etapa 2<br/><small>README.md</small>")
+    readme_servi_o_aws_49_b0aad876("Serviço AWS:<br/><small>README.md</small>")
+    readme_foco_da_ferramenta_53_153c85e2("Foco da ferramenta:<br/><small>README.md</small>")
+    readme_descri_o_do_caso_de_uso_57_e359750a("Descrição do caso de uso:<br/><small>README.md</small>")
+    readme_benef_cios_obtidos_65_f3e76798("Benefícios obtidos:<br/><small>README.md</small>")
+    readme_etapa_2_633eb77c -->|contains| readme_servi_o_aws_49_b0aad876
+    readme_etapa_2_633eb77c -->|contains| readme_foco_da_ferramenta_53_153c85e2
+    readme_etapa_2_633eb77c -->|contains| readme_descri_o_do_caso_de_uso_57_e359750a
+    readme_etapa_2_633eb77c -->|contains| readme_benef_cios_obtidos_65_f3e76798
+    class readme_etapa_2_633eb77c concept;
+    class readme_servi_o_aws_49_b0aad876 concept;
+    class readme_foco_da_ferramenta_53_153c85e2 concept;
+    class readme_descri_o_do_caso_de_uso_57_e359750a concept;
+    class readme_benef_cios_obtidos_65_f3e76798 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Benefícios obtidos:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Benefícios obtidos:.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Descrição do caso de uso:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do caso de uso:.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Etapa 2</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Etapa 2.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Foco da ferramenta:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Foco da ferramenta:.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Serviço AWS:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Serviço AWS:.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>README.md</code></td><td>5 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Readmemd Benefícios Obtidos ====== -->
+<h2 id="readmemd-benef-cios-obtidos-d2c04b">9. Readmemd Benefícios Obtidos</h2>
+<p>Readmemd Benefícios Obtidos groups implementation around readmemd, benefícios, obtidos, descrição, mostly in README.md. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Readmemd Benefícios Obtidos (5 nodes, 4 edges)
+    readme_etapa_3_fe4b9ecf("Etapa 3<br/><small>README.md</small>")
+    readme_servi_o_aws_77_61872239("Serviço AWS:<br/><small>README.md</small>")
+    readme_foco_da_ferramenta_81_d3c0a655("Foco da ferramenta:<br/><small>README.md</small>")
+    readme_descri_o_do_caso_de_uso_85_177c1265("Descrição do caso de uso:<br/><small>README.md</small>")
+    readme_benef_cios_obtidos_93_52eaad81("Benefícios obtidos:<br/><small>README.md</small>")
+    readme_etapa_3_fe4b9ecf -->|contains| readme_servi_o_aws_77_61872239
+    readme_etapa_3_fe4b9ecf -->|contains| readme_foco_da_ferramenta_81_d3c0a655
+    readme_etapa_3_fe4b9ecf -->|contains| readme_descri_o_do_caso_de_uso_85_177c1265
+    readme_etapa_3_fe4b9ecf -->|contains| readme_benef_cios_obtidos_93_52eaad81
+    class readme_etapa_3_fe4b9ecf concept;
+    class readme_servi_o_aws_77_61872239 concept;
+    class readme_foco_da_ferramenta_81_d3c0a655 concept;
+    class readme_descri_o_do_caso_de_uso_85_177c1265 concept;
+    class readme_benef_cios_obtidos_93_52eaad81 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Benefícios obtidos:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Benefícios obtidos:.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Descrição do caso de uso:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Descrição do caso de uso:.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Etapa 3</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Etapa 3.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Foco da ferramenta:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Foco da ferramenta:.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Serviço AWS:</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Serviço AWS:.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>README.md</code></td><td>5 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>44</td></tr>
+      <tr><td>Edges</td><td>42</td></tr>
+      <tr><td>Hyperedges</td><td>0</td></tr>
+      <tr><td>Communities</td><td>8</td></tr>
+      <tr><td>Documented Sections</td><td>8</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>42</td></tr>
+      <tr><td>INFERRED</td><td>0</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>AWS-Farm-cia- — Architecture Documentation</p>
+  <p>Generated: 2026-10-28 06:35 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>
