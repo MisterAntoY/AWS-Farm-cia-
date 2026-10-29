@@ -1,4 +1,21 @@
-# RELATÓRIO DE IMPLEMENTAÇÃO DE SERVIÇOS AWS
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/graph.svg?title=AWS+Farm%C3%A1cia&subtitle=Arquitetura+e+Implementa%C3%A7%C3%A3o+de+Servi%C3%A7os+Cloud+AWS&logo=amazonwebservices&theme=amber&mode=dark" />
+    <img alt="AWS Farmácia" src="https://shieldcn.dev/header/graph.svg?title=AWS+Farm%C3%A1cia&subtitle=Arquitetura+e+Implementa%C3%A7%C3%A3o+de+Servi%C3%A7os+Cloud+AWS&logo=amazonwebservices&theme=amber&mode=light" />
+  </picture>
+</p>
+
+<p align="center">
+  <a href="https://github.com/MisterAntoY/AWS-Farm-cia-"><img alt="GitHub Stars" src="https://shieldcn.dev/github/stars/MisterAntoY/AWS-Farm-cia-.svg?variant=secondary&size=sm&theme=amber" /></a>
+  <img alt="Cloud Provider" src="https://shieldcn.dev/badge/Cloud-Amazon_Web_Services-FF9900.svg?logo=amazonwebservices&variant=secondary&size=sm" />
+  <img alt="Architecture" src="https://shieldcn.dev/badge/Architecture-High_Availability-10b981.svg?variant=secondary&size=sm&theme=amber" />
+</p>
+
+---
+
+Relatório detalhado e especificação arquitetural da implantação de infraestrutura em nuvem na Amazon Web Services (AWS) para sistemas de gestão farmacêutica.
+
+---
 
 **Data:** 20 de Maio de 2026
 **Empresa:** Abstergo Industries
